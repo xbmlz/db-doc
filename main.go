@@ -10,12 +10,12 @@ import (
 var dbConfig model.DbConfig
 
 func main() {
-	fmt.Println("choose database:\n1:MySQL\n2:Oracle\n3:SQL Server\n" +
+	fmt.Println("choose database:\n1:MySQL\n2:SQL Server\n" +
 		"Select the appropriate numbers choose database type\n" +
 		"(Enter 'ctrl + c' to cancel): ")
 	// db type
 	fmt.Scanln(&dbConfig.DbType)
-	if dbConfig.DbType < 1 || dbConfig.DbType > 4 {
+	if dbConfig.DbType < 1 || dbConfig.DbType > 2 {
 		fmt.Println("wrong number, will exit ...")
 		os.Exit(0)
 	}
@@ -57,10 +57,6 @@ func GetDefaultConfig() {
 		dbConfig.User = "root"
 	}
 	if dbConfig.DbType == 2 {
-		dbConfig.Port = 1521
-		dbConfig.User = ""
-	}
-	if dbConfig.DbType == 3 {
 		dbConfig.Port = 1433
 		dbConfig.User = "sa"
 	}

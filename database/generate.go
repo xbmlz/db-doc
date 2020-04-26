@@ -19,7 +19,7 @@ func Generate(config *model.DbConfig) {
 	fmt.Println(dbConfig)
 	db := initDB()
 	if db == nil {
-		fmt.Println("init databse err")
+		fmt.Println("init database err")
 		os.Exit(1)
 	}
 	defer db.Close()
@@ -43,9 +43,6 @@ func initDB() *sql.DB {
 			dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.Database)
 	}
 	if dbConfig.DbType == 2 {
-		// TODO
-	}
-	if dbConfig.DbType == 3 {
 		// https://github.com/denisenkom/go-mssqldb
 		dbType = "mssql"
 		// server=%s;database=%s;user id=%s;password=%s;port=%d;encrypt=disable
@@ -108,9 +105,6 @@ func getTableSQL() string {
 			dbConfig.Database)
 	}
 	if dbConfig.DbType == 2 {
-		// TODO
-	}
-	if dbConfig.DbType == 3 {
 		sql = fmt.Sprintf(`
 		select * from (
 			select cast(so.name as varchar(500)) as TableName, 
@@ -133,9 +127,6 @@ func getColumnSQL(tableName string) string {
 			dbConfig.Database, tableName)
 	}
 	if dbConfig.DbType == 2 {
-		// TODO
-	}
-	if dbConfig.DbType == 3 {
 		sql = fmt.Sprintf(`
 		SELECT ColName = C.name, 
 			   ColKey = ISNULL(IDX.PrimaryKey, NULL), 

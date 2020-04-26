@@ -30,7 +30,7 @@ func createDocsify(docPath string, tables []model.Table) {
 		tableMd = append(tableMd, fmt.Sprintf("# %s(%s)", tables[i].TableComment, tables[i].TableName))
 		tableMd = append(tableMd, "| 列名 | 类型 | KEY | 可否为空 | 默认值 | 注释 |")
 		tableMd = append(tableMd, "| ---- | ---- | ---- | ---- | ---- | ----  |")
-		// TODO create table.md
+		// create table.md
 		cols := tables[i].ColList
 		for j := range cols {
 			tableMd = append(tableMd, fmt.Sprintf("| %s | %s | %s | %s | %s | %s |",
@@ -39,7 +39,7 @@ func createDocsify(docPath string, tables []model.Table) {
 		tableStr := strings.Join(tableMd, "\r\n")
 		writeToFile(path.Join(docPath, tables[i].TableName+".md"), tableStr)
 	}
-	// TODO create _siderbar.md
+	// create _siderbar.md
 	siderbarStr := strings.Join(siderbar, "\r\n")
 	writeToFile(path.Join(docPath, "_siderbar.md"), siderbarStr)
 }
