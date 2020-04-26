@@ -41,30 +41,27 @@ func main() {
 		fmt.Scanln(&dbConfig.Database)
 	}
 	// doc type
-	// fmt.Println("input doc type (default docsify) :")
-	// fmt.Scanln(&dbConfig.DocType)
+	fmt.Println("choose doc type (default Docsify) :\n1:Docsify\n2:Gitbook")
+	fmt.Scanln(&dbConfig.DocType)
 	// generate
 	database.Generate(&dbConfig)
 }
 
 // GetDefaultConfig get default config
 func GetDefaultConfig() {
+	dbConfig.Host = "127.0.0.1"
+	dbConfig.Password = "123456"
+	dbConfig.DocType = 1
 	if dbConfig.DbType == 1 {
-		dbConfig.Host = "127.0.0.1"
 		dbConfig.Port = 3306
 		dbConfig.User = "root"
-		dbConfig.Password = "123456"
 	}
 	if dbConfig.DbType == 2 {
-		dbConfig.Host = "127.0.0.1"
 		dbConfig.Port = 1521
 		dbConfig.User = ""
-		dbConfig.Password = "123456"
 	}
 	if dbConfig.DbType == 3 {
-		dbConfig.Host = "127.0.0.1"
 		dbConfig.Port = 1433
 		dbConfig.User = "sa"
-		dbConfig.Password = "123456"
 	}
 }

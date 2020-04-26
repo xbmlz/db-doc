@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"db-doc/doc"
 	"db-doc/model"
 	"fmt"
 	"os"
@@ -24,6 +25,8 @@ func Generate(config *model.DbConfig) {
 	defer db.Close()
 	tables := getTableInfo(db)
 	fmt.Println(tables)
+	// create
+	doc.CreateDoc(dbConfig.DocType, dbConfig.Database, tables)
 }
 
 // InitDB 初始化数据库
