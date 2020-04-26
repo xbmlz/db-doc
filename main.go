@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var dbConfig = model.DbConfig{}
+var dbConfig model.DbConfig
 
 func main() {
 	fmt.Println("choose database:\n1:MySQL\n2:Oracle\n3:SQL Server\n" +
