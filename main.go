@@ -41,8 +41,8 @@ func main() {
 		fmt.Scanln(&dbConfig.Database)
 	}
 	// doc type
-	fmt.Println("input doc type (default docsify) :")
-	fmt.Scanln(&dbConfig.DocType)
+	// fmt.Println("input doc type (default docsify) :")
+	// fmt.Scanln(&dbConfig.DocType)
 	// generate
 	database.Generate(&dbConfig)
 }
