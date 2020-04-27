@@ -5,10 +5,39 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"path"
 	"strings"
 )
+
+const docsifyHTML = `
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	<meta charset="UTF-8">
+	<title>Databse Document</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="description" content="Description">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+	</head>
+	<body>
+	<div data-app id="main">加载中</div>
+	<script>
+		window.$docsify = {
+			el: '#main',
+			name: '',
+			repo: '',
+			search: 'auto',
+			loadSidebar: true
+		}
+	</script>
+	<script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
+	<script src="//unpkg.com/docsify/lib/plugins/search.js"></script>
+	</body>
+	</html>
+`
 
 // CreateDoc create doc
 func CreateDoc(docType int, dbName string, tables []model.Table) {
@@ -16,16 +45,19 @@ func CreateDoc(docType int, dbName string, tables []model.Table) {
 	docPath := path.Join(dir, dbName)
 	createDir(docPath)
 	if docType == 1 {
-		createDocsify(docPath, tables)
+		createDocsify(docPath, dbName, tables)
 	}
 }
 
 // createDocsify create _siderbar.md
-func createDocsify(docPath string, tables []model.Table) {
-	var siderbar []string
-	siderbar = append(siderbar, "* [数据库文档](README.md)")
+func createDocsify(docPath string, dbName string, tables []model.Table) {
+	var sidebar []string
+	var readme []string
+	sidebar = append(sidebar, "* [数据库文档](README.md)")
 	for i := range tables {
-		siderbar = append(siderbar, fmt.Sprintf("[%s](%s.md)", tables[i].TableComment, tables[i].TableName))
+		readme = append(readme, fmt.Sprintf("# %s数据库文档", dbName))
+		readme = append(readme, fmt.Sprintf("- [%s](%s.md)", tables[i].TableComment, tables[i].TableName))
+		sidebar = append(sidebar, fmt.Sprintf("* [%s](%s.md)", tables[i].TableComment, tables[i].TableName))
 		var tableMd []string
 		tableMd = append(tableMd, fmt.Sprintf("# %s(%s)", tables[i].TableComment, tables[i].TableName))
 		tableMd = append(tableMd, "| 列名 | 类型 | KEY | 可否为空 | 默认值 | 注释 |")
@@ -39,9 +71,19 @@ func createDocsify(docPath string, tables []model.Table) {
 		tableStr := strings.Join(tableMd, "\r\n")
 		writeToFile(path.Join(docPath, tables[i].TableName+".md"), tableStr)
 	}
-	// create _siderbar.md
-	siderbarStr := strings.Join(siderbar, "\r\n")
-	writeToFile(path.Join(docPath, "_siderbar.md"), siderbarStr)
+	// create readme.md
+	readmeStr := strings.Join(sidebar, "\r\n")
+	writeToFile(path.Join(docPath, "README.md"), readmeStr)
+	// create _sidebar.md
+	sidebarStr := strings.Join(sidebar, "\r\n")
+	writeToFile(path.Join(docPath, "_sidebar.md"), sidebarStr)
+	// create index.html
+	writeToFile(path.Join(docPath, "index.html"), docsifyHTML)
+	// create .nojekyll
+	writeToFile(path.Join(docPath, ".nojekyll"), "")
+	fmt.Println("doc generate successfully!")
+	// run server
+	runServer(docPath)
 }
 
 // createDir
@@ -74,6 +116,8 @@ func writeToFile(path, content string) {
 }
 
 // runServer run http static server
-func runServer() {
-
+func runServer(dir string) {
+	http.Handle("/", http.FileServer(http.Dir(dir)))
+	fmt.Println("doc server is runing : http://127.0.0.1:3000")
+	log.Fatal(http.ListenAndServe(":3000", nil))
 }

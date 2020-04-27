@@ -16,7 +16,6 @@ var dbConfig model.DbConfig
 // Generate generate doc
 func Generate(config *model.DbConfig) {
 	dbConfig = *config
-	fmt.Println(dbConfig)
 	db := initDB()
 	if db == nil {
 		fmt.Println("init database err")
@@ -24,7 +23,6 @@ func Generate(config *model.DbConfig) {
 	}
 	defer db.Close()
 	tables := getTableInfo(db)
-	fmt.Println(tables)
 	// create
 	doc.CreateDoc(dbConfig.DocType, dbConfig.Database, tables)
 }
@@ -49,7 +47,6 @@ func initDB() *sql.DB {
 		dbURL = fmt.Sprintf("server=%s;database=%s;user id=%s;password=%s;port=%d;encrypt=disable",
 			dbConfig.Host, dbConfig.Database, dbConfig.User, dbConfig.Password, dbConfig.Port)
 	}
-	fmt.Println(dbURL)
 	db, err := sql.Open(dbType, dbURL)
 	if err != nil {
 		fmt.Println(err)
@@ -101,14 +98,18 @@ func getColumnInfo(db *sql.DB, tableName string) []model.Column {
 func getTableSQL() string {
 	var sql string
 	if dbConfig.DbType == 1 {
-		sql = fmt.Sprintf("select table_name as TableName, table_comment as TableComment from information_schema.tables where table_schema = '%s'",
-			dbConfig.Database)
+		sql = fmt.Sprintf(`
+			select table_name    as TableName, 
+			       table_comment as TableComment
+			from information_schema.tables 
+			where table_schema = '%s'
+		`, dbConfig.Database)
 	}
 	if dbConfig.DbType == 2 {
 		sql = fmt.Sprintf(`
 		select * from (
 			select cast(so.name as varchar(500)) as TableName, 
-			cast(sep.value as varchar(500)) as TableComment
+			cast(sep.value as varchar(500))      as TableComment
 			from sysobjects so
 			left JOIN sys.extended_properties sep on sep.major_id=so.id and sep.minor_id=0
 			where (xtype='U' or xtype='v')
@@ -122,9 +123,15 @@ func getTableSQL() string {
 func getColumnSQL(tableName string) string {
 	var sql string
 	if dbConfig.DbType == 1 {
-		sql = fmt.Sprintf("select column_name as ColName, column_type as ColType, column_key as ColKey, is_nullable as IsNullable, column_comment as ColComment"+
-			" from information_schema.columns where table_schema = '%s' and table_name = '%s'",
-			dbConfig.Database, tableName)
+		sql = fmt.Sprintf(`
+			select column_name as ColName,
+			column_type        as ColType,
+			column_key         as ColKey,
+			is_nullable        as IsNullable,
+			column_comment     as ColComment
+			from information_schema.columns 
+			where table_schema = '%s' and table_name = '%s'
+		`, dbConfig.Database, tableName)
 	}
 	if dbConfig.DbType == 2 {
 		sql = fmt.Sprintf(`
