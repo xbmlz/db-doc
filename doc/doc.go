@@ -34,19 +34,17 @@ const docsifyHTML = `
 		}
 	</script>
 	<script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-	<script src="//unpkg.com/docsify/lib/plugins/search.js"></script>
+	<script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
 	</body>
 	</html>
 `
 
 // CreateDoc create doc
-func CreateDoc(docType int, dbName string, tables []model.Table) {
+func CreateDoc(dbName string, tables []model.Table) {
 	dir, _ := os.Getwd()
 	docPath := path.Join(dir, dbName)
 	createDir(docPath)
-	if docType == 1 {
-		createDocsify(docPath, dbName, tables)
-	}
+	createDocsify(docPath, dbName, tables)
 }
 
 // createDocsify create _siderbar.md

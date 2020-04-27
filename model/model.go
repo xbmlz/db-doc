@@ -9,7 +9,6 @@ type DbConfig struct {
 	Password string
 	Database string
 	Sid      string
-	DocType  int // 1. docsify
 }
 
 // Column info
@@ -19,6 +18,7 @@ type Column struct {
 	ColKey     string
 	IsNullable string
 	ColComment string
+	ColDefault string
 }
 
 // Table info

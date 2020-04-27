@@ -30,10 +30,6 @@ root
 123456
 ? Database name:
 test
-? Document type (Docsify) :
-1:Docsify
-2:Gitbook
-1
 Doc generate successfully!
 Doc server is running : http://127.0.0.1:3000
 ```

@@ -24,7 +24,7 @@ func Generate(config *model.DbConfig) {
 	defer db.Close()
 	tables := getTableInfo(db)
 	// create
-	doc.CreateDoc(dbConfig.DocType, dbConfig.Database, tables)
+	doc.CreateDoc(dbConfig.Database, tables)
 }
 
 // InitDB 初始化数据库
@@ -88,7 +88,7 @@ func getColumnInfo(db *sql.DB, tableName string) []model.Column {
 	}
 	var column model.Column
 	for rows.Next() {
-		rows.Scan(&column.ColName, &column.ColType, &column.ColKey, &column.IsNullable, &column.ColComment)
+		rows.Scan(&column.ColName, &column.ColType, &column.ColKey, &column.IsNullable, &column.ColComment, &column.ColDefault)
 		columns = append(columns, column)
 	}
 	return columns
@@ -128,45 +128,40 @@ func getColumnSQL(tableName string) string {
 			column_type        as ColType,
 			column_key         as ColKey,
 			is_nullable        as IsNullable,
-			column_comment     as ColComment
+			column_comment     as ColComment,
+			column_default     as ColDefault
 			from information_schema.columns 
 			where table_schema = '%s' and table_name = '%s'
 		`, dbConfig.Database, tableName)
 	}
 	if dbConfig.DbType == 2 {
 		sql = fmt.Sprintf(`
-		SELECT ColName = C.name, 
-			   ColKey = ISNULL(IDX.PrimaryKey, NULL), 
-			   ColType = T.name, 
-			   IsNullable = CASE WHEN C.is_nullable = 1 THEN N'是' ELSE N'否' END, 
-			   ColComment = ISNULL(CAST(PFD.[value] AS VARCHAR(500)), NULL)
-		FROM sys.columns C
-		INNER JOIN sys.objects O ON C.object_id = O.object_id AND O.type = 'U' AND O.is_ms_shipped = 0
-		INNER JOIN sys.types T ON C.user_type_id = T.user_type_id
-		LEFT  JOIN sys.default_constraints D ON C.object_id = D.parent_object_id AND C.column_id = D.parent_column_id AND C.default_object_id = D.[object_id]
-		LEFT  JOIN sys.extended_properties PFD ON PFD.class = 1 AND C.[object_id] = PFD.major_id AND C.column_id = PFD.minor_id
-		LEFT  JOIN sys.extended_properties PTB ON PTB.class = 1 AND PTB.minor_id = 0 AND C.[object_id] = PTB.major_id
-		LEFT  JOIN 
-			(
-				SELECT IDXC.[object_id], 
-					IDXC.column_id, 
-					Sort = CASE INDEXKEY_PROPERTY(IDXC.[object_id], IDXC.index_id, IDXC.index_column_id, 'IsDescending')
-						WHEN 1 THEN 'DESC'
-						WHEN 0 THEN 'ASC'
-						ELSE ''
-						END, 
-					PrimaryKey = CASE WHEN IDX.is_primary_key = 1 THEN N'PRI' ELSE NULL END, 
-					IndexName = IDX.Name
-				FROM sys.indexes IDX
-				INNER JOIN sys.index_columns IDXC ON IDX.[object_id] = IDXC.[object_id] AND IDX.index_id = IDXC.index_id
-				LEFT  JOIN sys.key_constraints KC ON IDX.[object_id] = KC.[parent_object_id] AND IDX.index_id = KC.unique_index_id
-				INNER JOIN (
-					SELECT [object_id], Column_id, index_id = MIN(index_id)
-					FROM sys.index_columns
-					GROUP BY [object_id], Column_id
-				) IDXCUQ ON IDXC.[object_id] = IDXCUQ.[object_id] AND IDXC.Column_id = IDXCUQ.Column_id AND IDXC.index_id = IDXCUQ.index_id
-			) IDX ON C.[object_id] = IDX.[object_id] AND C.column_id = IDX.column_id
-		WHERE O.name = '%s'
+		SELECT 
+			ColName = a.name,
+			ColType = b.name + '(' + cast(COLUMNPROPERTY(a.id, a.name, 'PRECISION') as varchar) + ')',
+			ColKey  = case when exists(SELECT 1
+										FROM sysobjects
+										where xtype = 'PK'
+										and name in (
+											SELECT name
+											FROM sysindexes
+											WHERE indid in (
+												SELECT indid
+												FROM sysindexkeys
+												WHERE id = a.id AND colid = a.colid
+										))) then 'PRI'
+							else '' end,
+			IsNullable = case when a.isnullable = 1 then 'YES' else 'NO' end,
+			ColComment = isnull(g.[value], ''),
+			ColDefault = isnull(e.text, '')
+		FROM syscolumns a
+				left join systypes b on a.xusertype = b.xusertype
+				inner join sysobjects d on a.id = d.id and d.xtype = 'U' and d.name <> 'dtproperties'
+				left join syscomments e on a.cdefault = e.id
+				left join sys.extended_properties g on a.id = g.major_id and a.colid = g.minor_id
+				left join sys.extended_properties f on d.id = f.major_id and f.minor_id = 0
+		where d.name = '%s'
+		order by a.id, a.colorder
 		`, tableName)
 	}
 	return sql
