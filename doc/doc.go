@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"syscall"
 )
 
 const docsifyHTML = `
@@ -107,9 +108,10 @@ func isExist(path string) bool {
 
 // writeToFile write file
 func writeToFile(path, content string) {
-	if err := ioutil.WriteFile(path, []byte(content), 777); err != nil {
-		os.Exit(1)
+	syscall.Umask(0000)
+	if err := ioutil.WriteFile(path, []byte(content), 0777); err != nil {
 		log.Println(err.Error())
+		os.Exit(1)
 	}
 }
 
