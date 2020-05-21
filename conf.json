@@ -1,0 +1,9 @@
+{
+  "DbType": 1,
+  "Host": "192.168.0.23",
+  "Port": 3306,
+  "User": "root",
+  "Password": "hi.louis@888",
+  "Database": "weimall",
+  "Sid": ""
+}

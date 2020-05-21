@@ -3,50 +3,55 @@ package main
 import (
 	"db-doc/database"
 	"db-doc/model"
-	"fmt"
+	"encoding/json"
+	"io/ioutil"
+	"log"
 	"os"
 )
 
-var dbConfig model.DbConfig
+var dbConfig *model.DbConfig
 
 func main() {
-	fmt.Println("? Database type:\n1:MySQL\n2:SQL Server")
-	// db type
-	fmt.Scanln(&dbConfig.DbType)
-	if dbConfig.DbType < 1 || dbConfig.DbType > 2 {
-		fmt.Println("wrong number, will exit ...")
-		os.Exit(0)
-	}
-	GetDefaultConfig()
-	// db host
-	fmt.Println("? Database host (127.0.0.1) :")
-	fmt.Scanln(&dbConfig.Host)
-	// db port
-	fmt.Printf("? Database port (%d) :\n", dbConfig.Port)
-	fmt.Scanln(&dbConfig.Port)
-	// db user
-	fmt.Printf("? Database username (%s) :\n", dbConfig.User)
-	fmt.Scanln(&dbConfig.User)
-	// db password
-	fmt.Println("? Database password (123456) :")
-	fmt.Scanln(&dbConfig.Password)
-	// db name
-	fmt.Println("? Database name:")
-	fmt.Scanln(&dbConfig.Database)
+	Setup()
 	// generate
-	database.Generate(&dbConfig)
+	database.Generate(dbConfig)
 }
 
 // GetDefaultConfig get default config
-func GetDefaultConfig() {
-	dbConfig.Host = "127.0.0.1"
-	dbConfig.Password = "123456"
-	if dbConfig.DbType == 1 {
-		dbConfig.Port = 3306
-		dbConfig.User = "root"
+func Setup() {
+	GetConfig()
+}
+
+
+func GetConfig() *model.DbConfig {
+	if dbConfig == nil {
+		cfg, err := loadConfig()
+		if err != nil {
+			log.Fatal(err)
+			return nil
+		}
+		dbConfig = &cfg
 	}
-	if dbConfig.DbType == 2 {
-		dbConfig.Port = 1433
-		dbConfig.User = "sa"
+	return dbConfig
+}
+
+func loadConfig() (config model.DbConfig, err error) {
+	data, err := loadFile("./conf.json")
+	if err != nil {
+		return
 	}
+	err = json.Unmarshal(data, &config)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func loadFile(fileName string) ([]byte, error) {
+	file, err := os.Open(fileName)
+	if err != nil {
+		return nil, err
+	}
+	return ioutil.ReadAll(file)
 }
