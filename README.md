@@ -10,7 +10,7 @@ db-doc 是一款生成在线数据库文档的小工具
 ## ⚒️ 支持
 
 * [x] Mysql  
-* [x] SQL Server  
+* [x] SQL Server   
 
 ## ⚗ 用法
 

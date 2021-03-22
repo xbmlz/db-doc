@@ -24,7 +24,7 @@ func Generate(config *model.DbConfig) {
 	defer db.Close()
 	tables := getTableInfo(db)
 	// create
-	doc.CreateDoc(dbConfig.Database, tables)
+	doc.CreateDoc(dbConfig.Database, config.DocType, tables)
 }
 
 // InitDB 初始化数据库

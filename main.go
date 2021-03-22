@@ -33,6 +33,9 @@ func main() {
 	// db name
 	fmt.Println("? Database name:")
 	fmt.Scanln(&dbConfig.Database)
+	// doc type
+	fmt.Println("? Document type:\n1:On-line\n2:Offline")
+	fmt.Scanln(&dbConfig.DocType)
 	// generate
 	database.Generate(&dbConfig)
 }

@@ -2,7 +2,8 @@ package model
 
 // DbConfig 数据库配置
 type DbConfig struct {
-	DbType   int // 1. mysql 2. oracle 3. mssql
+	DbType   int // 1. mysql  2. oracle 3. mssql
+	DocType  int // 1. online 3. offline
 	Host     string
 	Port     int
 	User     string
