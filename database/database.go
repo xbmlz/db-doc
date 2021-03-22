@@ -70,6 +70,9 @@ func getTableInfo(db *sql.DB) []model.Table {
 	var table model.Table
 	for rows.Next() {
 		rows.Scan(&table.TableName, &table.TableComment)
+		if len(table.TableComment) == 0 {
+			table.TableComment = table.TableName
+		}
 		tables = append(tables, table)
 	}
 	for i := range tables {
