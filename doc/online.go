@@ -19,7 +19,7 @@ const docsifyHTML = `
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 	<meta name="description" content="Description">
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-	<link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+	<link rel="stylesheet" href="//cdn.staticfile.org/docsify/4.12.1/themes/vue.min.css">
 	</head>
 	<body>
 	<div data-app id="main">加载中</div>
@@ -32,8 +32,8 @@ const docsifyHTML = `
 			loadSidebar: true
 		}
 	</script>
-	<script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-	<script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+	<script src="//cdn.staticfile.org/docsify/4.12.1/docsify.min.js"></script>
+	<script src="//cdn.staticfile.org/docsify/4.12.1/plugins/search.min.js"></script>
 	</body>
 	</html>
 `
