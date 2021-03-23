@@ -7,7 +7,7 @@ db-doc 是一款生成在线数据库文档的小工具
 
 ### 在线文档
 
-![在线文档](![](https://gitee.com/czxtc/note-pic-repo/raw/master//note/20210323153924.png))
+![在线文档](https://gitee.com/czxtc/note-pic-repo/raw/master//note/20210323153924.png)
 
 ### 离线文档
 
