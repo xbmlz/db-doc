@@ -24,7 +24,7 @@ func createOfflineDoc(docPath string, dbName string, tables []model.Table) {
 		cols := tables[i].ColList
 		for j := range cols {
 			docMdArr = append(docMdArr, fmt.Sprintf("| %s | %s | %s | %s | %s | %s |",
-				cols[j].ColName, cols[j].ColType, cols[j].ColKey, cols[j].IsNullable, "", cols[j].ColComment))
+				cols[j].ColName, cols[j].ColType, cols[j].ColKey, cols[j].IsNullable, cols[j].ColDefault, cols[j].ColComment))
 		}
 		docMdArr = append(docMdArr, "")
 	}

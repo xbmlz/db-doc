@@ -27,7 +27,7 @@ func createOnlineDoc(docPath string, dbName string, tables []model.Table) {
 		cols := tables[i].ColList
 		for j := range cols {
 			tableMd = append(tableMd, fmt.Sprintf("| %s | %s | %s | %s | %s | %s |",
-				cols[j].ColName, cols[j].ColType, cols[j].ColKey, cols[j].IsNullable, "", cols[j].ColComment))
+				cols[j].ColName, cols[j].ColType, cols[j].ColKey, cols[j].IsNullable, cols[j].ColDefault, cols[j].ColComment))
 		}
 		tableStr := strings.Join(tableMd, "\r\n")
 		util.WriteToFile(path.Join(docPath, tables[i].TableName+".md"), tableStr)
