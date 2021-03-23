@@ -76,3 +76,5 @@ Doc server is running : http://127.0.0.1:3000
 * [Docsify - A magical documentation site generator](https://docsify.js.org)
 
 * [blackfriday - a markdown processor for Go](https://github.com/russross/blackfriday)
+
+* [chromedp - A faster, simpler way to drive browsers supporting the Chrome DevTools Protocol.](https://github.com/chromedp/chromedp)
