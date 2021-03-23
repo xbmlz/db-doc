@@ -24,7 +24,7 @@ db-doc 是一款生成在线数据库文档的小工具
 
 * [x] Mysql  
 * [x] SQL Server
-* [] PostgreSQL    
+* [x] Postgre SQL    
 
 ## ⚗ 用法
 
