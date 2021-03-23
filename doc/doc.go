@@ -12,12 +12,12 @@ func CreateDoc(dbName string, docType int, tables []model.Table) {
 	var docPath string
 	dir, _ := os.Getwd()
 	if docType == 1 {
-		docPath = path.Join(dir, dbName, "online")
+		docPath = path.Join(dir, "dist", dbName, "www")
 		util.CreateDir(docPath)
 		createOnlineDoc(docPath, dbName, tables)
 	} else {
-		docPath = path.Join(dir, dbName, "offline")
+		docPath = path.Join(dir, "dist", dbName)
 		util.CreateDir(docPath)
-		createOfflineDoc()
+		createOfflineDoc(docPath, dbName, tables)
 	}
 }

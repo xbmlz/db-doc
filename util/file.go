@@ -10,6 +10,7 @@ import (
 func CreateDir(dirPath string) {
 	if !IsExist(dirPath) {
 		err := os.MkdirAll(dirPath, os.ModePerm)
+		os.Chmod(dirPath, os.ModePerm)
 		log.Println(err.Error())
 		os.Exit(1)
 	} else {

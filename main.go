@@ -10,10 +10,10 @@ import (
 var dbConfig model.DbConfig
 
 func main() {
-	fmt.Println("? Database type:\n1:MySQL\n2:SQL Server")
+	fmt.Println("? Database type:\n1:MySQL\n2:SQL Server\n3:PostgreSQL")
 	// db type
 	fmt.Scanln(&dbConfig.DbType)
-	if dbConfig.DbType < 1 || dbConfig.DbType > 2 {
+	if dbConfig.DbType < 1 || dbConfig.DbType > 3 {
 		fmt.Println("wrong number, will exit ...")
 		os.Exit(0)
 	}
@@ -34,7 +34,7 @@ func main() {
 	fmt.Println("? Database name:")
 	fmt.Scanln(&dbConfig.Database)
 	// doc type
-	fmt.Println("? Document type:\n1:On-line\n2:Offline")
+	fmt.Println("? Document type:\n1:Online\n2:Offline")
 	fmt.Scanln(&dbConfig.DocType)
 	// generate
 	database.Generate(&dbConfig)
@@ -51,5 +51,9 @@ func GetDefaultConfig() {
 	if dbConfig.DbType == 2 {
 		dbConfig.Port = 1433
 		dbConfig.User = "sa"
+	}
+	if dbConfig.DbType == 3 {
+		dbConfig.Port = 5432
+		dbConfig.User = "postgres"
 	}
 }

@@ -10,34 +10,6 @@ import (
 	"strings"
 )
 
-const docsifyHTML = `
-	<!DOCTYPE html>
-	<html lang="en">
-	<head>
-	<meta charset="UTF-8">
-	<title>Database Document</title>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	<meta name="description" content="Description">
-	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-	<link rel="stylesheet" href="//cdn.staticfile.org/docsify/4.12.1/themes/vue.min.css">
-	</head>
-	<body>
-	<div data-app id="main">加载中</div>
-	<script>
-		window.$docsify = {
-			el: '#main',
-			name: '',
-			repo: '',
-			search: 'auto',
-			loadSidebar: true
-		}
-	</script>
-	<script src="//cdn.staticfile.org/docsify/4.12.1/docsify.min.js"></script>
-	<script src="//cdn.staticfile.org/docsify/4.12.1/plugins/search.min.js"></script>
-	</body>
-	</html>
-`
-
 // createOnlineDoc create _siderbar.md
 func createOnlineDoc(docPath string, dbName string, tables []model.Table) {
 	var sidebar []string
@@ -78,6 +50,6 @@ func createOnlineDoc(docPath string, dbName string, tables []model.Table) {
 // runServer run http static server
 func runServer(dir string) {
 	http.Handle("/", http.FileServer(http.Dir(dir)))
-	fmt.Println("doc server is runing : http://127.0.0.1:3000")
+	fmt.Println("doc server is running : http://127.0.0.1:3000")
 	log.Fatal(http.ListenAndServe(":3000", nil))
 }

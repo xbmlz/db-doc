@@ -5,16 +5,49 @@ db-doc 是一款生成在线数据库文档的小工具
 
 ## 📸 截图
 
-![docsify](https://s1.ax1x.com/2020/04/27/JWAmIe.md.png)
+### 在线文档
+
+![在线文档](![](https://gitee.com/czxtc/note-pic-repo/raw/master//note/20210323153924.png))
+
+### 离线文档
+
+#### Markdown
+
+![Markdown](https://gitee.com/czxtc/note-pic-repo/raw/master//note/20210323154242.png)
+
+#### HTML
+
+![HTML](https://gitee.com/czxtc/note-pic-repo/raw/master//note/20210323154126.png)
+
 
 ## ⚒️ 支持
 
 * [x] Mysql  
-* [x] SQL Server   
+* [x] SQL Server
+* [] PostgreSQL    
 
 ## ⚗ 用法
 
-下载[Windows](https://github.com/viodo/db-doc/releases/download/v1.0.0/db-doc-win.exe) [Linux](https://github.com/viodo/db-doc/releases/download/v1.0.0/db-doc-linux) [MacOS](https://github.com/viodo/db-doc/releases/download/v1.0.0/db-doc-macos)双击打开, 按照提示输入配置即可
+### 下载
+
+#### Windows
+
+[点击下载](https://github.com/viodo/db-doc/releases/download/v1.0.0/db-doc-win.exe) 
+
+#### Linux
+
+```
+wget https://github.com/viodo/db-doc/releases/download/v1.0.0/db-doc-linux
+```
+
+#### MacOS
+
+```
+wget https://github.com/viodo/db-doc/releases/download/v1.0.0/db-doc-macos
+```
+
+双击打开, 按照提示输入操作即可
+
 ```shell
 ? Database type:
 1:MySQL
@@ -30,6 +63,10 @@ root
 123456
 ? Database name:
 test
+? Document type:
+1:Online(在线文档)
+2:Offline(离线文档)
+1
 Doc generate successfully!
 Doc server is running : http://127.0.0.1:3000
 ```
@@ -38,3 +75,5 @@ Doc server is running : http://127.0.0.1:3000
 ## 🙏 鸣谢
 
 * [Docsify - A magical documentation site generator](https://docsify.js.org)
+
+* [blackfriday - a markdown processor for Go](https://github.com/russross/blackfriday)

@@ -119,6 +119,17 @@ func getTableSQL() string {
 		) t 
 		`)
 	}
+	if dbConfig.DbType == 3 {
+		sql = fmt.Sprintf(`
+			SELECT a.relname as TableName, 
+				   b.description as TableComment
+			FROM pg_class a
+			LEFT OUTER JOIN pg_description b ON b.objsubid = 0 AND a.oid = b.objoid
+			WHERE a.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+			AND a.relkind = 'r'
+			ORDER BY a.relname
+		`)
+	}
 	return sql
 }
 
