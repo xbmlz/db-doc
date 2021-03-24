@@ -9,12 +9,10 @@ import (
 // CreateDir
 func CreateDir(dirPath string) {
 	if !IsExist(dirPath) {
-		err := os.MkdirAll(dirPath, os.ModePerm)
-		os.Chmod(dirPath, os.ModePerm)
-		log.Println(err.Error())
-		os.Exit(1)
-	} else {
-		// TODO tips
+		if err := os.MkdirAll(dirPath, os.ModePerm); err != nil {
+			log.Println(err.Error())
+			os.Exit(1)
+		}
 	}
 }
 

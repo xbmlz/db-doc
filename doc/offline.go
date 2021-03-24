@@ -39,7 +39,7 @@ func createOfflineDoc(docPath string, dbName string, tables []model.Table) {
 	docMdArr = append([]string{mdCss}, docMdArr...)
 	docMdStr = strings.Join(docMdArr, "\r\n")
 	htmlPath := path.Join(docPath, dbName+".html")
-	convert2Html(htmlPath, docMdStr)
+	convert2Html(docMdStr, htmlPath)
 	// pdf
 	pdfPath := path.Join(docPath, dbName+".pdf")
 	convert2Pdf(htmlPath, pdfPath)

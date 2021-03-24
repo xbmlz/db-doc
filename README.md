@@ -18,6 +18,11 @@ db-doc 是一款生成在线数据库文档的小工具
 
 ![HTML](https://gitee.com/czxtc/note-pic-repo/raw/master//note/20210323154126.png)
 
+#### PDF
+
+![PDF](https://gitee.com/czxtc/note-pic-repo/raw/master//note/20210324091920.png)
+
+
 
 ## ⚒️ 支持
 
