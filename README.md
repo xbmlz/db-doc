@@ -34,23 +34,9 @@ db-doc 是一款生成在线数据库文档的小工具
 
 ### 下载
 
-#### Windows
+[点击下载](https://github.com/viodo/db-doc/releases) 
 
-[点击下载](https://github.com/viodo/db-doc/releases/download/v1.0.0/db-doc-win.exe) 
-
-#### Linux
-
-```
-wget https://github.com/viodo/db-doc/releases/download/v1.0.0/db-doc-linux
-```
-
-#### MacOS
-
-```
-wget https://github.com/viodo/db-doc/releases/download/v1.0.0/db-doc-macos
-```
-
-双击打开, 按照提示输入操作即可
+解压后双击打开DbDoc, 按照提示输入操作即可
 
 ```shell
 ? Database type:
