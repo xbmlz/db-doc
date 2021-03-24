@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 var dbConfig model.DbConfig
@@ -24,7 +25,7 @@ func Generate(config *model.DbConfig) {
 	defer db.Close()
 	tables := getTableInfo(db)
 	// create
-	doc.CreateDoc(dbConfig.Database, tables)
+	doc.CreateDoc(dbConfig.Database, config.DocType, tables)
 }
 
 // InitDB 初始化数据库
@@ -46,6 +47,13 @@ func initDB() *sql.DB {
 		// server=%s;database=%s;user id=%s;password=%s;port=%d;encrypt=disable
 		dbURL = fmt.Sprintf("server=%s;database=%s;user id=%s;password=%s;port=%d;encrypt=disable",
 			dbConfig.Host, dbConfig.Database, dbConfig.User, dbConfig.Password, dbConfig.Port)
+	}
+	if dbConfig.DbType == 3 {
+		// https://github.com/lib/pq
+		dbType = "postgres"
+		// postgres://pqgotest:password@localhost:5432/pqgotest?sslmode=verify-full
+		dbURL = fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", dbConfig.User, dbConfig.Password,
+			dbConfig.Host, dbConfig.Port, dbConfig.Database)
 	}
 	db, err := sql.Open(dbType, dbURL)
 	if err != nil {
@@ -69,6 +77,7 @@ func getTableInfo(db *sql.DB) []model.Table {
 	defer rows.Close()
 	var table model.Table
 	for rows.Next() {
+		table.TableComment = ""
 		rows.Scan(&table.TableName, &table.TableComment)
 		if len(table.TableComment) == 0 {
 			table.TableComment = table.TableName
@@ -119,6 +128,17 @@ func getTableSQL() string {
 		) t 
 		`)
 	}
+	if dbConfig.DbType == 3 {
+		sql = fmt.Sprintf(`
+			SELECT a.relname     as TableName, 
+				   b.description as TableComment
+			FROM pg_class a
+			LEFT OUTER JOIN pg_description b ON b.objsubid = 0 AND a.oid = b.objoid
+			WHERE a.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+			AND a.relkind = 'r'
+			ORDER BY a.relname
+		`)
+	}
 	return sql
 }
 
@@ -166,6 +186,59 @@ func getColumnSQL(tableName string) string {
 		where d.name = '%s'
 		order by a.id, a.colorder
 		`, tableName)
+	}
+	if dbConfig.DbType == 3 {
+		sql = fmt.Sprintf(`
+		select
+			column_name as ColName,
+			data_type as ColType,
+			case
+				when b.pk_name is null then ''
+				else 'PRI'
+			end as ColKey,
+			is_nullable as IsNullable,
+			c.DeText as ColComment,
+			column_default as ColDefault
+		from
+			information_schema.columns
+		left join (
+			select
+				pg_attr.attname as colname,
+				pg_constraint.conname as pk_name
+			from
+				pg_constraint
+			inner join pg_class on
+				pg_constraint.conrelid = pg_class.oid
+			inner join pg_attribute pg_attr on
+				pg_attr.attrelid = pg_class.oid
+				and pg_attr.attnum = pg_constraint.conkey[1]
+			inner join pg_type on
+				pg_type.oid = pg_attr.atttypid
+			where
+				pg_class.relname = 'file_sources'
+				and pg_constraint.contype = 'p' ) b on
+			b.colname = information_schema.columns.column_name
+		left join (
+			select
+				attname,
+				description as DeText
+			from
+				pg_class
+			left join pg_attribute pg_attr on
+				pg_attr.attrelid = pg_class.oid
+			left join pg_description pg_desc on
+				pg_desc.objoid = pg_attr.attrelid
+				and pg_desc.objsubid = pg_attr.attnum
+			where
+				pg_attr.attnum>0
+				and pg_attr.attrelid = pg_class.oid
+				and pg_class.relname = 'file_sources' )c on
+			c.attname = information_schema.columns.column_name
+		where
+			table_schema = 'public'
+			and table_name = '%s'
+		order by
+			ordinal_position desc`, tableName)
 	}
 	return sql
 }
