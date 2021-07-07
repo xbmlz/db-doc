@@ -7,9 +7,12 @@ import (
 	"os"
 )
 
+const version = "v1.1.1"
+
 var dbConfig model.DbConfig
 
 func main() {
+	fmt.Printf("Welcome to the database document generation tool, the current version is %s \n", version)
 	fmt.Println("? Database type:\n1:MySQL or MariaDB\n2:SQL Server\n3:PostgreSQL")
 	// db type
 	fmt.Scanln(&dbConfig.DbType)
