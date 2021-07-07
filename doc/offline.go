@@ -5,23 +5,39 @@ import (
 	"db-doc/model"
 	"db-doc/util"
 	"fmt"
-	"github.com/chromedp/cdproto/page"
-	"github.com/chromedp/chromedp"
-	"github.com/russross/blackfriday"
 	"io/ioutil"
 	"path"
 	"strings"
+
+	"github.com/chromedp/cdproto/page"
+	"github.com/chromedp/chromedp"
+	"github.com/russross/blackfriday"
 )
 
 // createOfflineDoc create offline html、md、pdf、word
-func createOfflineDoc(docPath string, dbName string, tables []model.Table) {
+func createOfflineDoc(docPath string, dbInfo model.DbInfo, tables []model.Table) {
 	var (
 		docMdArr []string
 		docMdStr string
 	)
-	// markdown
+	// 标题
+	docMdArr = append(docMdArr, fmt.Sprintf("# %s 数据库文档", dbInfo.DbName))
+	// 生成基础信息
+	docMdArr = append(docMdArr, "### 基础信息")
+	docMdArr = append(docMdArr, "| 数据库名称 | 版本 | 字符集 | 排序规则 |")
+	docMdArr = append(docMdArr, "| ---- | ---- | ---- | ---- |")
+	docMdArr = append(docMdArr, fmt.Sprintf("| %s | %s | %s | %s |", dbInfo.DbName, dbInfo.Version, dbInfo.Charset, dbInfo.Collation))
+	// 生成目录
+	docMdArr = append(docMdArr, "### 数据库表目录")
+	docMdArr = append(docMdArr, "| 序号 | 表名 | 描述 |")
+	docMdArr = append(docMdArr, "| ---- | ---- | ---- |")
 	for i := range tables {
-		docMdArr = append(docMdArr, fmt.Sprintf("# %s(%s)", tables[i].TableComment, tables[i].TableName))
+		docMdArr = append(docMdArr, fmt.Sprintf("| %d | %s | %s |", i+1, tables[i].TableName, tables[i].TableComment))
+	}
+	// 生成表
+	docMdArr = append(docMdArr, "### 数据库表信息")
+	for i := range tables {
+		docMdArr = append(docMdArr, fmt.Sprintf("#### %s(%s)", tables[i].TableName, tables[i].TableComment))
 		docMdArr = append(docMdArr, "| 列名 | 类型 | KEY | 可否为空 | 默认值 | 注释 |")
 		docMdArr = append(docMdArr, "| ---- | ---- | ---- | ---- | ---- | ----  |")
 		// create table.md
@@ -33,15 +49,15 @@ func createOfflineDoc(docPath string, dbName string, tables []model.Table) {
 		docMdArr = append(docMdArr, "")
 	}
 	docMdStr = strings.Join(docMdArr, "\r\n")
-	util.WriteToFile(path.Join(docPath, dbName+".md"), docMdStr)
+	util.WriteToFile(path.Join(docPath, dbInfo.DbName+".md"), docMdStr)
 	fmt.Println("markdown generate successfully!")
 	// html
 	docMdArr = append([]string{mdCss}, docMdArr...)
 	docMdStr = strings.Join(docMdArr, "\r\n")
-	htmlPath := path.Join(docPath, dbName+".html")
+	htmlPath := path.Join(docPath, dbInfo.DbName+".html")
 	convert2Html(docMdStr, htmlPath)
 	// pdf
-	pdfPath := path.Join(docPath, dbName+".pdf")
+	pdfPath := path.Join(docPath, dbInfo.DbName+".pdf")
 	convert2Pdf(htmlPath, pdfPath)
 }
 
@@ -87,8 +103,11 @@ func convert2Pdf(htmlPath, pdfPath string) {
 			return err
 		}),
 	})
-	util.CheckErr(err)
-	err = ioutil.WriteFile(pdfPath, buf, 0644)
-	util.CheckErr(err)
-	fmt.Println("pdf generate successfully!")
+	if err != nil {
+		fmt.Println("pdf generate failed! " + err.Error())
+	} else {
+		err = ioutil.WriteFile(pdfPath, buf, 0644)
+		util.CheckErr(err)
+		fmt.Println("pdf generate successfully!")
+	}
 }

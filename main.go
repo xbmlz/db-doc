@@ -10,7 +10,7 @@ import (
 var dbConfig model.DbConfig
 
 func main() {
-	fmt.Println("? Database type:\n1:MySQL\n2:SQL Server\n3:PostgreSQL")
+	fmt.Println("? Database type:\n1:MySQL or MariaDB\n2:SQL Server\n3:PostgreSQL")
 	// db type
 	fmt.Scanln(&dbConfig.DbType)
 	if dbConfig.DbType < 1 || dbConfig.DbType > 3 {
