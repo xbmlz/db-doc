@@ -8,16 +8,16 @@ import (
 )
 
 // CreateDoc create doc
-func CreateDoc(dbName string, docType int, tables []model.Table) {
+func CreateDoc(dbInfo model.DbInfo, docType int, tables []model.Table) {
 	var docPath string
 	dir, _ := os.Getwd()
 	if docType == 1 {
-		docPath = path.Join(dir, "dist", dbName, "www")
+		docPath = path.Join(dir, "dist", dbInfo.DbName, "www")
 		util.CreateDir(docPath)
-		createOnlineDoc(docPath, dbName, tables)
+		createOnlineDoc(docPath, dbInfo, tables)
 	} else {
-		docPath = path.Join(dir, "dist", dbName)
+		docPath = path.Join(dir, "dist", dbInfo.DbName)
 		util.CreateDir(docPath)
-		createOfflineDoc(docPath, dbName, tables)
+		createOfflineDoc(docPath, dbInfo, tables)
 	}
 }

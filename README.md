@@ -6,21 +6,21 @@ db-doc 是一款生成在线数据库文档的小工具
 
 ### 在线文档
 
-![在线文档](https://gitee.com/czxtc/note-pic-repo/raw/master//note/20210323153924.png)
+![image-20210707130615707](https://gitee.com/viodo/note-pic-repo/raw/master//note/image-20210707130615707.png)
 
 ### 离线文档
 
 #### Markdown
 
-![Markdown](https://gitee.com/czxtc/note-pic-repo/raw/master//note/20210323154242.png)
+![image-20210707130825880](https://gitee.com/viodo/note-pic-repo/raw/master//note/image-20210707130825880.png)
 
 #### HTML
 
-![HTML](https://gitee.com/czxtc/note-pic-repo/raw/master//note/20210323154126.png)
+![image-20210707130851820](https://gitee.com/viodo/note-pic-repo/raw/master//note/image-20210707130851820.png)
 
 #### PDF
 
-![PDF](https://gitee.com/czxtc/note-pic-repo/raw/master//note/20210324091920.png)
+![PDF](https://gitee.com/viodo/note-pic-repo/raw/master//note/20210324091920.png)
 
 
 
@@ -40,8 +40,9 @@ db-doc 是一款生成在线数据库文档的小工具
 
 ```shell
 ? Database type:
-1:MySQL
+1:MySQL or MariaDB
 2:SQL Server
+3:PostgreSQL
 1
 ? Database host (127.0.0.1) :
 127.0.0.1

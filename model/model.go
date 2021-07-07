@@ -1,5 +1,13 @@
 package model
 
+// DbInfo 数据库基础信息
+type DbInfo struct {
+	Version   string
+	Charset   string
+	Collation string
+	DbName    string
+}
+
 // DbConfig 数据库配置
 type DbConfig struct {
 	DbType   int // 1. mysql  2. oracle 3. mssql

@@ -23,9 +23,11 @@ func Generate(config *model.DbConfig) {
 		os.Exit(1)
 	}
 	defer db.Close()
+	dbInfo := getDbInfo(db)
+	dbInfo.DbName = config.Database
 	tables := getTableInfo(db)
 	// create
-	doc.CreateDoc(dbConfig.Database, config.DocType, tables)
+	doc.CreateDoc(dbInfo, config.DocType, tables)
 }
 
 // InitDB 初始化数据库
@@ -64,6 +66,47 @@ func initDB() *sql.DB {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	return db
+}
+
+// getDbInfo 获取数据库的基本信息
+func getDbInfo(db *sql.DB) model.DbInfo {
+	var (
+		info       model.DbInfo
+		rows       *sql.Rows
+		err        error
+		key, value string
+	)
+	// 数据库版本
+	rows, err = db.Query("select @@version;")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		rows.Scan(&value)
+	}
+	info.Version = value
+	// 字符集
+	rows, err = db.Query("show variables like '%character_set_server%';")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		rows.Scan(&key, &value)
+	}
+	info.Charset = value
+	// 排序规则
+	rows, err = db.Query("show variables like 'collation_server%';")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		rows.Scan(&key, &value)
+	}
+	info.Collation = value
+	return info
 }
 
 // getTableInfo 获取表信息
