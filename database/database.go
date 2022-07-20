@@ -145,6 +145,7 @@ func getColumnInfo(db *sql.DB, tableName string) []model.Column {
 	for rows.Next() {
 		rows.Scan(&column.ColName, &column.ColType, &column.ColKey, &column.IsNullable, &column.ColComment, &column.ColDefault)
 		columns = append(columns, column)
+		column.ColDefault = ""
 	}
 	return columns
 }
@@ -197,7 +198,7 @@ func getColumnSQL(tableName string) string {
 			column_comment     as ColComment,
 			column_default     as ColDefault
 			from information_schema.columns 
-			where table_schema = '%s' and table_name = '%s'
+			where table_schema = '%s' and table_name = '%s' order by ordinal_position
 		`, dbConfig.Database, tableName)
 	}
 	if dbConfig.DbType == 2 {
